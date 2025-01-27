@@ -1,0 +1,156 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Designation_role {
+  sde
+  project_manager
+  technical_lead
+}
+
+enum TaskStatus {
+  open
+  Inprogress
+  completed
+}
+
+enum Role {
+  owner
+  member
+}
+
+model User {
+  id               Int              @id @default(autoincrement())
+  name             String
+  email            String           @unique
+  password         String
+  designation_role Designation_role @default(sde)
+  phone            String?
+  company_name     String?
+  is_active        Boolean          @default(true)
+  created_At       DateTime         @default(now())
+  updated_At       DateTime         @default(now())
+
+  projects    Project[]    @relation("UserProjects")
+  tasks       Task[]       @relation("UserTasks")
+  teamMembers TeamMember[] @relation("UserTeamMembers")
+  comments    Comment[]    @relation("UserComments")
+  attachments Attachment[] @relation("UserAttachments")
+
+  @@index([email])
+  @@map("users")
+}
+
+model Project {
+  Pid         Int      @id @default(autoincrement())
+  name        String
+  description String
+  ownerId     Int
+  created_At  DateTime @default(now())
+  updated_At  DateTime @updatedAt
+
+  owner User   @relation("UserProjects", fields: [ownerId], references: [id])
+  tasks Task[] @relation("ProjectTasks")
+  Team  Team[]
+
+  @@index([name])
+  @@map("projects")
+}
+
+model Task {
+  Tid         Int        @id @default(autoincrement())
+  title       String
+  description String
+  due_date    DateTime
+  status      TaskStatus @default(open)
+  assignedTo  Int?
+  projectId   Int
+  created_At  DateTime   @default(now())
+  updated_At  DateTime   @updatedAt
+
+  User        User?        @relation("UserTasks", fields: [assignedTo], references: [id])
+  Project     Project      @relation("ProjectTasks", fields: [projectId], references: [Pid])
+  comments    Comment[]    @relation("TaskComments")
+  attachments Attachment[] @relation("TaskAttachments")
+
+  @@map("tasks")
+}
+
+model Team {
+  teamId     Int      @id @default(autoincrement())
+  projectId  Int
+  Team_name  String
+  created_At DateTime @default(now())
+  updated_At DateTime @updatedAt
+
+  project     Project      @relation(fields: [projectId], references: [Pid])
+  teamMembers TeamMember[] @relation("TeamMembers")
+
+  @@index([Team_name])
+  @@map("teams")
+}
+
+model TeamMember {
+  teamMemberId Int  @id @default(autoincrement())
+  teamId       Int
+  userId       Int
+  role         Role
+
+  team Team @relation("TeamMembers", fields: [teamId], references: [teamId])
+  user User @relation("UserTeamMembers", fields: [userId], references: [id])
+
+  @@map("team_members")
+}
+
+model Comment {
+  commentId  Int      @id @default(autoincrement())
+  taskId     Int
+  userId     Int
+  content    String
+  created_At DateTime @default(now())
+  updated_At DateTime @updatedAt
+
+  user User @relation("UserComments", fields: [userId], references: [id])
+  task Task @relation("TaskComments", fields: [taskId], references: [Tid])
+
+  @@index([userId])
+  @@index([taskId])
+  @@map("comments")
+}
+
+model Attachment {
+  attachmentId Int      @id @default(autoincrement())
+  taskId       Int
+  fileUrl      String
+  uploadedBy   Int
+  uploaded_At  DateTime @default(now())
+  updated_At   DateTime @updatedAt
+
+  user User @relation("UserAttachments", fields: [uploadedBy], references: [id])
+  task Task @relation("TaskAttachments", fields: [taskId], references: [Tid])
+
+  @@index([uploadedBy])
+  @@index([taskId])
+  @@map("attachments")
+}
+
+model BlacklistedToken {
+  id          String   @id @default(uuid())
+  token       String   @unique
+  expiry_time DateTime
+  createdAt   DateTime @default(now())
+
+  @@index([token])
+  @@map("blacklisted_tokens")
+}
