@@ -151,13 +151,13 @@
 
 _Step1_: Create the repository in the github and link to your machine with your specific drive.
 
-- Git init https://github.com/pavankumar-ui/VirtualEventManagement.git
+- Git init https://github.com/pavankumar-ui/taskTrackingCollaborativeSystem.git
 
 the above command will create the repository in the github and link to your machine with your specific drive.
 
 _Step 2_ : Navigate to the Project Directory.
 
-- Type `cd Virtual_EventManagement` in the terminal.
+- Type `cd TaskMaster` in the terminal.
 
 _Step 3_ : Install the required packages in your terminal.
 
