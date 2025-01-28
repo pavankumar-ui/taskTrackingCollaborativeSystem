@@ -1,5 +1,5 @@
   # TaskMaster:A Collaborative Task Tracking System
-  A collaborative task tracking system that allows users to create, assign, and track tasks,create Projects. Certain users having specific roles and permissions for accessing and managing tasks (RBAC).
+  A collaborative task tracking system that allows users to create, assign, and track tasks,create Projects. Certain users can be given access to the project by the Manager.In addition to that, the team leader can assign tasks with due date to the team members and track their progress.
 
   ## Table of Contents
 
