@@ -72,5 +72,5 @@ const deleteProjectsById = async (req,res,next)=>{
 module.exports ={
     createProject,
     getAllProjects,
-    deleteProjectsByIds
+    deleteProjectsById
 }

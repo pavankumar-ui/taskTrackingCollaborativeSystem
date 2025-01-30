@@ -10,6 +10,7 @@ const CheckRole = require('../Middlewares/CheckRole');
 const validateJWT = require('../Middlewares/validateJWT');
 const teamAccess = require('../Middlewares/teamAccess');
 const createRateLimiter = require('../Utils/rateLimiter');
+const {validateTask} = require('../Middlewares/Validate');
 
 
 
@@ -23,7 +24,8 @@ const taskRateLimiter = createRateLimiter(
 
 
 //rate limiter for task creation to ensure that the server is not overwhelmed by excessive requests//
-taskRouter.post('/add', validateJWT, CheckRole,taskRateLimiter,createTask);
+//validateTask is a middleware function that validates the task data//
+taskRouter.post('/add', validateJWT,CheckRole,validateTask,taskRateLimiter,createTask);
 taskRouter.get("/:projectId", validateJWT, CheckRole,teamAccess, getTasks);
 taskRouter.put("/:Tid", validateJWT, CheckRole, updateTasks);
 taskRouter.delete("/:Tid", validateJWT, CheckRole, deleteTasks);
