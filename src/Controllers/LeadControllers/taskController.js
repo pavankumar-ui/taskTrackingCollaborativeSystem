@@ -29,13 +29,13 @@ const createTask = async (req, res, next) => {
                     content: `Generate a detailed description for the task: ${title}`
                 }
             ],
-            max_tokens: 50,
-            temperature: 1
+            max_tokens: 200,
+            temperature: 0.8
         });
 
         const aiDescription = completion.choices[0].message.content;
 
-        console.log("Generated Description:", aiDescription);
+        //console.log("Generated Description:", aiDescription);
         // Create task with AI-generated description
         const task = await prisma.task.create({
             data: {

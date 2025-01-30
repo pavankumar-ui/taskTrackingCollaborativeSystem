@@ -27,6 +27,13 @@ const createProject = async (req, res,next) => {
 }
 }
 
+
+
+
+
+
+
+
 const getAllProjects = async (req,res,next)=>{
 
     const prisma = req.app.get("prisma");

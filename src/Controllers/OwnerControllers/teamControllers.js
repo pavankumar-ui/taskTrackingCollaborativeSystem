@@ -29,86 +29,103 @@ const CreateTeam = async (req, res, next) => {
 }
 
 
-  const getTeams = async (req, res, next) => {
-    const prisma = req.app.get("prisma");
-    try {
-      const teams = await prisma.team.findMany();
-      return res.status(200).json({
-        message: "Teams fetched Successfully",
-        teams: teams
-      });
-    } catch (error) {
-      ServerError(res, error, next);
-    }
+const getTeams = async (req, res, next) => {
+  const prisma = req.app.get("prisma");
+  try {
+    const teams = await prisma.team.findMany();
+    return res.status(200).json({
+      message: "Teams fetched Successfully",
+      teams: teams
+    });
+  } catch (error) {
+    ServerError(res, error, next);
   }
+}
 
-  //deploy the team members both junior and lead to the team table
-  const deployTeamMembers = async (req, res, next) => {
+//deploy the team members both junior and lead to the team table
+const deployTeamMembers = async (req, res, next) => {
 
-    const prisma = req.app.get("prisma");
+  const prisma = req.app.get("prisma");
 
-    try {
-      const teamId = req.body.teamId;
-      const userId = req.body.userId;
-      const teamMember = await prisma.team.findUnique({ where: { teamId: teamId } });
-      const user = await prisma.user.findUnique({ where: { id: userId } });
+  try {
+    const teamId = req.body.teamId;
+    const userId = req.body.userId;
+    const teamObject = await prisma.team.findUnique({ where: { teamId: teamId } });
+    const user = await prisma.user.findUnique({ where: { id: userId } });
 
-      console.log(user);
-      console.log(teamMember);
+    //console.log(user);
+    //console.log(teamMember);
 
-      const addMember = await prisma.teamMember.create({
-        data: {
-          teamId: teamMember.teamId,
-          userId: user.id,
-          role: req.body.role
-        }
-      });
 
-      return res.status(201).json({
-        message: "Team member added Successfully",
-        member_Role: addMember.role,
-        member_id: addMember.teamMemberId
-      });
-    }
-    catch (error) {
+    //check whether the team exists or not//
+    if (!teamObject) return res.status(404).json({ message: "Team not found" });
 
-      if (error.code === 'P2025') {
-        return res.status(404).json({ message: "TeamId not found" });
+    const addMember = await prisma.teamMember.create({
+      data: {
+        teamId: teamObject.teamId,
+        userId: user.id,
+        role: req.body.role
       }
-      ServerError(res, error, next);
-    }
-  }
+    });
 
-
-  const getTeamMembers = async (req, res, next) => {
-    const prisma = req.app.get("prisma");
-    try {
-      const teamMembers = await prisma.teamMember.findMany({
-        include: {
-          team: true,
-          user: true
+    //to ensure whether manager has added the team owner again to the same team,when already given permission to it//
+    if (addMember.role === "Owner") {
+      const checkTeam = await prisma.teamMember.findMany({
+        where: {
+          teamId: teamMember.teamId,
+          role: "Owner"
         }
       });
 
-      return res.status(200).json({
-        message: "Team members List fetched Successfully",
-        teamMembers: {
-          teamMembers: teamMembers.map((teamMember) => {
-            return {
-              teamMemberId: teamMember.teamMemberId,
-              teamName: teamMember.team.Team_name,
-              userName: teamMember.user.name,
-              role: teamMember.role
-            }})}});
-
-    } catch (error) {
-      ServerError(error,req,res,next);
+      if (checkTeam.length === 1) return res.status(400).json({
+        message: "Team already has an owner or instead add as member to team"
+      });
     }
-  }
 
-  module.exports = {
-    CreateTeam,
-    deployTeamMembers,
-    getTeams,
-    getTeamMembers
+    return res.status(201).json({
+      message: "Team member added Successfully",
+      member_Role: addMember.role,
+      member_id: addMember.teamMemberId
+    });
   }
+  catch (error) {
+    ServerError(res, error, next);
+  }
+}
+
+
+const getTeamMembers = async (req, res, next) => {
+  const prisma = req.app.get("prisma");
+  try {
+    const teamMembers = await prisma.teamMember.findMany({
+      include: {
+        team: true,
+        user: true
+      }
+    });
+
+    return res.status(200).json({
+      message: "Team members List fetched Successfully",
+      teamMembers: {
+        teamMembers: teamMembers.map((teamMember) => {
+          return {
+            teamMemberId: teamMember.teamMemberId,
+            teamName: teamMember.team.Team_name,
+            userName: teamMember.user.name,
+            role: teamMember.role
+          }
+        })
+      }
+    });
+
+  } catch (error) {
+    ServerError(error, req, res, next);
+  }
+}
+
+module.exports = {
+  CreateTeam,
+  deployTeamMembers,
+  getTeams,
+  getTeamMembers
+}
