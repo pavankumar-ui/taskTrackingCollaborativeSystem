@@ -43,6 +43,7 @@ b. Prerequisites to be installed in the machine.
 
 The project is structured as follows:
 
+```
 src
 ├── Controllers
 │   ├── CollaborateControllers
@@ -76,7 +77,7 @@ src
 └── Utils
     ├── rateLimiter.js
     └── ServerError.js
-
+```
 - CollaborationControllers: Contains controllers for collaboration-related functionalities.
 - LeadControllers: Contains controllers for task-related functionalities.
 - OwnerControllers: Contains controllers for project and team related functionalities.
