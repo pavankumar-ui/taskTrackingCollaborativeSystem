@@ -286,18 +286,17 @@ you can use the following endpoints:
 
 ## 6.Dependencies Used
 
-- `bcryptjs` - To hash the password.
-- `crypto` - To generate the random string.
-- `dotenv` - To load the environment variables.
-- `express` - To create the server.
-- `express-rate-limit` - To limit the number of requests.
-- `express-validation` - To validate the request body.
-- `jsonwebtoken` - To generate the JWT token.
-- `prisma` - To connect to the database.
-- `prisma-client-lib` - To connect to the database client setup.
-- `jsonwebtoken` - To generate the JWT token.
-- `joi` - To validate the request body.
-- `openai` - To generate the AI response.
-- `socket.io` - To create the socket connection.
-- `socket.io-client` - To create the socket connection for client.
-- `nodemon` - To restart the server automatically.
+- [`bcryptjs`](https://www.npmjs.com/package/bcryptjs) - To hash the password.
+- [`crypto`](https://www.npmjs.com/package/crypto-js) - To generate the random string.
+- [`dotenv`](https://www.npmjs.com/package/dotenv)- To load the environment variables.
+- [`express`](https://www.npmjs.com/package/express) - To create the server.
+- [`express-rate-limit`](https://www.npmjs.com/package/express-rate-limit) - To limit the number of requests.
+- [`express-validation`](https://www.npmjs.com/package/express-validation) - To validate the request body.
+- [`jsonwebtoken`](https://www.npmjs.com/package/jsonwebtoken) - To generate the JWT token.
+- [`prisma`](https://www.prisma.io/docs) - To connect to the database.
+- [`prisma-client-lib`](https://www.npmjs.com/package/prisma-client-lib) - To connect to the database client setup.
+- [`joi`](https://joi.dev/) - To validate the request body.
+- [`openai`](https://www.npmjs.com/package/openai) - To generate the AI response.
+- [`socket.io`](https://www.npmjs.com/package/socket.io) - To create the socket connection.
+- [`socket.io-client`](https://www.npmjs.com/package/socket.io-client) - To create the socket connection for client.
+- [`nodemon`](https://www.npmjs.com/package/nodemon) - To restart the server automatically.
