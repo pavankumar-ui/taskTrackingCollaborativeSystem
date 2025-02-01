@@ -45,37 +45,37 @@ The project is structured as follows:
 
 src
 ├── Controllers
-│  ├── CollaborateControllers
-│  │  ├── attachmentController.js
-│  │  └── commentController.js
-│  ├── LeadControllers
-│  │  └── taskController.js
-│  ├── OwnerControllers
-│  │  ├── projectController.js
-│  │  └── teamControllers.js
-│  ├── authController.js
-│  └── teamMemberController.js
+│   ├── CollaborateControllers
+│   │   ├── attachmentController.js
+│   │   └── commentController.js
+│   ├── LeadControllers
+│   │   └── taskController.js
+│   ├── OwnerControllers
+│   │   ├── projectController.js
+│   │   └── teamControllers.js
+│   ├── authController.js
+│   └── teamMemberController.js
 ├── Middlewares
-│  ├── CheckRole.js
-│  ├── memberAccess.js
-│  ├── teamAccess.js
-│  ├── TokenExpiration.js
-│  ├── Validate.js
-│  └── validateJWT.js
+│   ├── CheckRole.js
+│   ├── memberAccess.js
+│   ├── teamAccess.js
+│   ├── TokenExpiration.js
+│   ├── Validate.js
+│   └── validateJWT.js
 ├── Routes
-│  ├── authRoutes.js
-│  ├── collaborate.js
-│  ├── indexRoutes.js
-│  ├── members.js
-│  ├── project.js
-│  ├── tasks.js
-│  └── teams.js
+│   ├── authRoutes.js
+│   ├── collaborate.js
+│   ├── indexRoutes.js
+│   ├── members.js
+│   ├── project.js
+│   ├── tasks.js
+│   └── teams.js
 ├── Services
-│  ├── notifications.js
-│  └── testSocket.js
+│   ├── notifications.js
+│   └── testSocket.js
 └── Utils
-   ├── rateLimiter.js
-   └── ServerError.js
+    ├── rateLimiter.js
+    └── ServerError.js
 
 - CollaborationControllers: Contains controllers for collaboration-related functionalities.
 - LeadControllers: Contains controllers for task-related functionalities.
@@ -134,7 +134,7 @@ src
 
 ---
 
-## Setup Instructions and installation of packages.
+## 3.Setup Instructions and installation of packages.
 
 _Step1_: Create the repository in the github and link to your machine with your specific drive.
 
