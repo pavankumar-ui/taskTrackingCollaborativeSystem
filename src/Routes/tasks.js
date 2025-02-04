@@ -11,15 +11,16 @@ const validateJWT = require('../Middlewares/validateJWT');
 const teamAccess = require('../Middlewares/teamAccess');
 const createRateLimiter = require('../Utils/rateLimiter');
 const {validateTask} = require('../Middlewares/Validate');
+const { rateLimiterSettings } = require('../Config/aiConfig');
 
 
 
 
 // Define rate limit (e.g., 5 requests per minute) //callback function to handle rate limiting//
 const taskRateLimiter = createRateLimiter(
-    5, // Max requests
-    60 * 1000, // 1 minute
-    'You have exceeded the maximum number of task creation attempts. Please try again later.'
+    rateLimiterSettings.MAX_REQUESTS,
+    rateLimiterSettings.WINDOW_DURATION, 
+    rateLimiterSettings.ERROR_MESSAGE
 );
 
 

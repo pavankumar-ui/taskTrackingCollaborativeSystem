@@ -1,6 +1,7 @@
 const ServerError = require("../../Utils/ServerError");
 const NotificationService = require("../../Services/notifications");
 const OpenAI = require('openai');
+const {aiConstantSettings} = require("../../Config/aiConfig");
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
@@ -18,7 +19,7 @@ const createTask = async (req, res, next) => {
 
         // Generate description using OpenAI
         const completion = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: aiConstantSettings.AI_MODEL,
             messages: [
                 {
                     role: "system",
@@ -29,8 +30,8 @@ const createTask = async (req, res, next) => {
                     content: `Generate a detailed description for the task: ${title}`
                 }
             ],
-            max_tokens: 200,
-            temperature: 0.8
+            max_tokens: aiConstantSettings.SET_MAX_TOKENS,
+            temperature: aiConstantSettings.SET_TEMPERATURE
         });
 
         const aiDescription = completion.choices[0].message.content;
