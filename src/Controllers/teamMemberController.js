@@ -1,6 +1,5 @@
-
 const ServerError = require('../Utils/ServerError');
-
+const {statusConfig} = require('../Config/statusConfig');
 
 //this file functionality is to handle the team member related operations//
 const viewTasksBasedonAssignedUser = async (req, res, next) => {
@@ -24,7 +23,7 @@ const viewTasksBasedonAssignedUser = async (req, res, next) => {
             }
         });
 
-        return res.status(200).json({
+        return res.status(statusConfig.SUCCESS).json({
             message: "Tasks Lists assigned to You",
             tasks: assignedMember,
             projectName: assignedMember.projectId
@@ -45,7 +44,7 @@ const UpdateThestatusofTask = async (req, res, next) => {
         const status = req.body.status;
 
         if (Tid === "" || undefined) {
-            return res.status(404).json({ message: "Task ID is required" });
+            return res.status(statusConfig.BAD_REQUEST).json({ message: "Task ID is required" });
         }
 
         // First verify the task exists and belongs to the user
@@ -56,7 +55,10 @@ const UpdateThestatusofTask = async (req, res, next) => {
         console.log(taskExists);
 
         if (!taskExists) {
-            return res.status(404).json({ message: "Task Not Found or Not Assigned to You" });
+            return res.status(statusConfig.NOT_FOUND)
+            .json({
+                 message: "Task Not Found or Not Assigned to You"
+                 });
         }
 
         const updateTaskStatus = await prisma.task.update({
@@ -68,7 +70,7 @@ const UpdateThestatusofTask = async (req, res, next) => {
             }
         });
 
-        return res.status(200).json({
+        return res.status(statusConfig.SUCCESS).json({
             message: "Task Status Updated Successfully",
             taskID: updateTaskStatus.Tid,
             Status: updateTaskStatus.status

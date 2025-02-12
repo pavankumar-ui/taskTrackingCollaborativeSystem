@@ -1,3 +1,4 @@
+const { statusConfig } = require("../Config/statusConfig");
 
 const  memberAccess = async (req,res,next)=>{
 
@@ -7,7 +8,7 @@ const  memberAccess = async (req,res,next)=>{
         const Checkuser = await prisma.user.findFirst({where:{id:userId}});
 
         if(Checkuser.designation_role !== "sde"){
-            return res.status(403).json({message:"Unauthorized access! only members can update and view the assigned tasks"});
+            return res.status(statusConfig.INVALID_ROLE).json({message:"Unauthorized access! only members can update and view the assigned tasks"});
         }
 
         next();

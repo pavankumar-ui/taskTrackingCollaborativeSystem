@@ -1,5 +1,8 @@
 //it is the task collaboration controller where team lead and members react/share the resources of the tasks//
 
+const { statusConfig } = require("../../Config/statusConfig");
+const ServerError =  require("../../Utils/ServerError");
+
 
 //collaboration functionality based on comments//
 const postACommmentBasedonProjectTask = async (req, res, next) => {
@@ -10,7 +13,7 @@ const postACommmentBasedonProjectTask = async (req, res, next) => {
 
     // Add validation for taskId
     if (!taskId) {
-        return res.status(400).json({ message: "Task ID is required" });
+        return res.status(statusConfig.BAD_REQUEST).json({ message: "Task ID is required" });
     }
 
     try {
@@ -23,7 +26,7 @@ const postACommmentBasedonProjectTask = async (req, res, next) => {
         });
 
         if (!task) {
-            return res.status(404).json({message: "Task not found"});
+            return res.status(statusConfig.NOT_FOUND).json({message: "Task not found"});
         }
 
         const commentData = await prisma.comment.create({
@@ -33,13 +36,12 @@ const postACommmentBasedonProjectTask = async (req, res, next) => {
                  userId
             }
         });
-        return res.status(200).json({
+        return res.status(statusConfig.SUCCESS).json({
             message: "Comment posted successfully",
             comment: commentData.content
         });
     } catch(error) {
-        console.log(error);
-        return res.status(500).json({message: "Internal Server Error"});
+        ServerError(error, req, res, next);
     }
 }
 
@@ -69,13 +71,12 @@ const getCommentsBasedonTask = async (req, res, next) => {
                     created_At: 'desc'
                 }
             });
-            return res.status(200).json({
+            return res.status(statusConfig.SUCCESS).json({
                 message: "Comments fetched successfully",
                 comments:comments
             });
         } catch (error) {
-            console.log(error);
-            return res.status(500).json({message: "Internal Server Error"});
+           ServerError(error, req, res, next);
         }
 }
 
@@ -110,13 +111,12 @@ const getUserPostedComments = async (req, res, next) => {
             }
         });
 
-        return res.status(200).json({
+        return res.status(statusConfig.SUCCESS).json({
             message: "Your  Posted comments fetched successfully",
             comments: comments
         });
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({message: "Internal Server Error"});
+        ServerError(error, req, res, next);
     }
 }
 const updateCommentBasedonTask = async (req, res, next) => {
@@ -131,7 +131,7 @@ const updateCommentBasedonTask = async (req, res, next) => {
             }
         });
         if (!comment) {
-            return res.status(404).json({message: "Comment not found"});
+            return res.status(statusConfig.NOT_FOUND).json({message: "Comment not found"});
         }
         const updatedComment = await prisma.comment.update({
             where: {
@@ -141,13 +141,12 @@ const updateCommentBasedonTask = async (req, res, next) => {
                 content
             }
         });
-        return res.status(200).json({
+        return res.status(statusConfig.SUCCESS).json({
             message: "Comment updated successfully",
             comment: updatedComment.content
         });
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({message: "Internal Server Error"});
+       ServerError(error, req, res, next);
     }
 }
 
@@ -163,7 +162,7 @@ const deleteCommentBasedonTask = async (req, res, next) => {
             }
         });
         if (!comment) {
-            return res.status(404).json({message: "Comment not found"});
+            return res.status(statusConfig.NOT_FOUND).json({message: "Comment not found"});
         }
         await prisma.comment.delete({
             where: {
@@ -171,12 +170,11 @@ const deleteCommentBasedonTask = async (req, res, next) => {
                 userId: userId
             }
         });
-        return res.status(200).json({
+        return res.status(statusConfig.SUCCESS).json({
             message: "Comment deleted successfully"
         });
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({message: "Internal Server Error"});
+        ServerError(error, req, res, next);
     }
 }
 

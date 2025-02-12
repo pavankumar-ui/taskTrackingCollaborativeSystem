@@ -1,7 +1,8 @@
 const ServerError = require("../../Utils/ServerError");
 const NotificationService = require("../../Services/notifications");
 const OpenAI = require('openai');
-const {aiConstantSettings} = require("../../Config/aiConfig");
+const { aiConstantSettings } = require("../../Config/aiConfig");
+const { statusConfig } = require("../../Config/statusConfig");
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
@@ -53,7 +54,7 @@ const createTask = async (req, res, next) => {
         notificationService.notifyTaskAssignment(userId, task);
 
 
-        return res.status(201).json({
+        return res.status(statusConfig.CREATED).json({
             message: "Task created successfully",
             taskId: task.Tid,
             description: aiDescription
@@ -69,7 +70,7 @@ const createTask = async (req, res, next) => {
 const getTasks = async (req, res, next) => {
     const prisma = req.app.get("prisma");
     const { projectId } = req.params;
-    
+
     try {
         //fetch the tasks based on project id//
         const tasks = await prisma.task.findMany({
@@ -78,7 +79,7 @@ const getTasks = async (req, res, next) => {
             }
         });
 
-        return res.status(200).json({
+        return res.status(statusConfig.SUCCESS).json({
             message: "Task List fetched successfully",
             tasksList: tasks,
         });
@@ -101,7 +102,6 @@ const updateTasks = async (req, res, next) => {
         const { title, description, due_date, status, projectId } = req.body;
 
 
-
         const taskUpdate = await prisma.task.update(
             {
                 where: { Tid: parseInt(Tid) },
@@ -115,22 +115,21 @@ const updateTasks = async (req, res, next) => {
                 }
             });
 
+        if (!taskUpdate) return res.status(statusConfig.NOT_FOUND)
+            .json({ message: "Task not found for the task id" });
 
         //update the task in the notification service//
         if (taskUpdate.userId) {
             notificationService.notifyTaskUpdate(taskUpdate.userId, taskUpdate);
         }
 
-        return res.status(200).json({
+        return res.status(statusConfig.SUCCESS).json({
             message: "Task updated Successfully",
             taskUpdate: taskUpdate
         });
 
     }
     catch (error) {
-        if (error.code === "P2025") {
-            return res.status(404).json({ "message": "Task not found for the task id" });
-        }
         ServerError(error, req, res, next);
     }
 }
@@ -148,15 +147,16 @@ const deleteTasks = async (req, res, next) => {
                 Tid: parseInt(Tid)
             }
         });
-        return res.status(200).json({
+
+        if (!taskDelete) return res.status(statusConfig.NOT_FOUND).json({
+            message: "Task not found for the task id"
+        });
+
+        return res.status(statusConfig.SUCCESS).json({
             message: "Task deleted successfully",
             taskDelete: taskDelete
         });
     } catch (error) {
-
-        if (error.code === "P2025") {
-            return res.status(404).json({ "message": "Task not found for the task id" });
-        }
         ServerError(error, req, res, next);
     }
 
@@ -173,16 +173,16 @@ const filterTaskBasedonStatus = async (req, res, next) => {
         const statusparams = req.params.status;
 
         if (statusparams !== "completed" && statusparams !== "open" && statusparams !== "Inprogress") {
-            return res.status(400).json({ "message": "Invalid status parameter" });
+            return res.status(statusConfig.BAD_REQUEST).json({ "message": "Invalid status parameter" });
         }
 
         const tasks = await prisma.task.findMany({ where: { status: statusparams } });
 
         if (tasks.length === 0) {
-            return res.status(404).json({ "message": "No tasks found based on status" });
+            return res.status(statusConfig.NOT_FOUND).json({ "message": "No tasks found based on status" });
         }
 
-        return res.status(200).json({
+        return res.status(statusConfig.SUCCESS).json({
             message: "Tasks fetched based on status",
             tasks: tasks
         });
@@ -210,10 +210,10 @@ const searchTaskBasedonTitle = async (req, res, next) => {
             });
 
         if (tasks.length === 0) {
-            return res.status(404).json({ "message": "No tasks found based on title" });
+            return res.status(statusConfig.NOT_FOUND).json({ "message": "No tasks found based on title" });
         }
 
-        return res.status(200).json(
+        return res.status(statusConfig.SUCCESS).json(
             {
                 message: "tasks fetched based on Title",
                 tasks: tasks
@@ -247,10 +247,11 @@ const searchTasksBasedonDescription = async (req, res, next) => {
 
 
         if (tasks.length === 0) {
-            return res.status(404).json({ "message": "No tasks found based on description" });
+            return res.status(statusConfig.NOT_FOUND)
+                 .json({ "message": "No tasks found based on description" });
         }
 
-        return res.status(200).json({
+        return res.status(statusConfig.SUCCESS).json({
             message: "Tasks fetched based on description",
             tasks: tasks
         });

@@ -1,5 +1,6 @@
 const joi = require('joi');
 const {validate, Joi: JoiValidator} = require('express-validation');
+const { statusConfig } = require('../Config/statusConfig');
 
   const signupSchema = { 
     body:
@@ -76,7 +77,7 @@ const {validate, Joi: JoiValidator} = require('express-validation');
 const validateErrors = (error, req, res, next) => {
     if (error && error.details) {
       const messages = error.details.map((err) => err.message);
-      return res.status(400).json({ errors: messages });
+      return res.status(statusConfig.BAD_REQUEST).json({ errors: messages });
     }
     next();
   };

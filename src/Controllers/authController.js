@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const ServerError = require('../Utils/ServerError');
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
+const { statusConfig } = require('../Config/statusConfig');
 
 
 const Signup = async (req, res, next) => {
@@ -28,7 +29,7 @@ const Signup = async (req, res, next) => {
         });
         //By initial if he/she is manager or team leader,then he can give the designation role as 
         // manager or team leader, then he can have access to add the tasks/create the project to team members//
-        return res.status(201).json({
+        return res.status(statusConfig.CREATED).json({
             "message": "user registered Successfully",
             user
         });
@@ -69,7 +70,7 @@ const Signin = async (req, res, next) => {
             console.log("user registered for task notifications");
         }
 
-        return res.status(200).json({
+        return res.status(statusConfig.SUCCESS).json({
             "message": "User Logged in successfully",
             "designation": checkuser.designation_role,
             token
@@ -90,7 +91,7 @@ const getProfileData = async (req, res, next) => {
     try {
         const userProfile = await prisma.user.findFirst({ where: { id: user.id } });
 
-        return res.status(200).json({
+        return res.status(statusConfig.SUCCESS).json({
             "message": "User Profile data",
             userProfile
         });
@@ -129,7 +130,7 @@ const modifyProfileData = async (req, res, next) => {
         });
         //console.log(updatedUser);
 
-        return res.status(200).json({
+        return res.status(statusConfig.SUCCESS).json({
             "message": "user Profile data updated Successfully",
             "updatedUserProfile": updatedUser
         })
@@ -146,7 +147,8 @@ const logout = async (req, res, next) => {
     const token = req.headers.authorization;
 
     if (token === "") {
-        return res.status(400).json({ message: "token is missing in the header" });
+        return res.status(statusConfig.TOKEN_NOT_PROVIDED)
+           .json({ message: "token is missing in the header" });
     }
 
     try {
@@ -182,16 +184,18 @@ const logout = async (req, res, next) => {
                 }
             });
 
-            if (blacklistedToken) return res.status(200).json({ message: `user ${req.user.name} logged out successfully` });
+            if (blacklistedToken) return res.status(statusConfig.SUCCESS)
+                .json({ message: `user ${req.user.name} logged out successfully` });
 
 
         } catch (err) {
-            console.error("Error inserting token into blacklist:", err);
-            return res.status(500).json({ message: "Database error" });
+            //console.error("Error inserting token into blacklist:", err);
+            return res.status(statusConfig.INTERNAL_SERVER_ERROR)
+            .json({ message: "Database error" });
         }
     } catch (error) {
-        console.error("Token verification failed:", error.message);
-        return res.status(403).json({ message: "token is invalid!" });
+        //console.error("Token verification failed:", error.message);
+        return res.status(statusConfig.INVALID_TOKEN).json({ message: "token is invalid!" });
     }
 }
 module.exports = {

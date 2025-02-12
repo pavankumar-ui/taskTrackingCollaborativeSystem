@@ -1,3 +1,4 @@
+const {statusConfig} = require("../../Config/statusConfig");
 
 const CreateTeam = async (req, res, next) => {
   const prisma = req.app.get("prisma");
@@ -14,16 +15,13 @@ const CreateTeam = async (req, res, next) => {
       }
     });
 
-    return res.status(201).json({
+    return res.status(statusConfig.CREATED).json({
       message: "Team created Successfully",
       team_name: team.Team_name
     });
 
   } catch (error) {
 
-    if (error.code === 'P2025') {
-      return res.status(404).json({ message: "ProjectId not found" });
-    }
     ServerError(res, error, next);
   }
 }
@@ -33,7 +31,7 @@ const getTeams = async (req, res, next) => {
   const prisma = req.app.get("prisma");
   try {
     const teams = await prisma.team.findMany();
-    return res.status(200).json({
+    return res.status(statusConfig.SUCCESS).json({
       message: "Teams fetched Successfully",
       teams: teams
     });
@@ -58,7 +56,8 @@ const deployTeamMembers = async (req, res, next) => {
 
 
     //check whether the team exists or not//
-    if (!teamObject) return res.status(404).json({ message: "Team not found" });
+    if (!teamObject) return res.status(statusConfig.NOT_FOUND)
+                                .json({ message: "Team not found" });
 
     const addMember = await prisma.teamMember.create({
       data: {
@@ -77,12 +76,12 @@ const deployTeamMembers = async (req, res, next) => {
         }
       });
 
-      if (checkTeam.length === 1) return res.status(400).json({
+      if (checkTeam.length === 1) return res.status(statusConfig.BAD_REQUEST).json({
         message: "Team already has an owner or instead add as member to team"
       });
     }
 
-    return res.status(201).json({
+    return res.status(statusConfig.CREATED).json({
       message: "Team member added Successfully",
       member_Role: addMember.role,
       member_id: addMember.teamMemberId
@@ -104,7 +103,7 @@ const getTeamMembers = async (req, res, next) => {
       }
     });
 
-    return res.status(200).json({
+    return res.status(statusConfig.SUCCESS).json({
       message: "Team members List fetched Successfully",
       teamMembers: {
         teamMembers: teamMembers.map((teamMember) => {

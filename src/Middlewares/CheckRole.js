@@ -1,3 +1,5 @@
+const  {statusConfig} = require("../Config/statusConfig");
+
 const CheckRole = async (req, res, next) => {
 
     const prisma = req.app.get("prisma");
@@ -27,7 +29,7 @@ const CheckRole = async (req, res, next) => {
       }
     // For SDEs, check if they have owner role
     if (user.designation_role === "sde" && teamMember?.role !== "owner") {
-        return res.status(403).json({
+        return res.status(statusConfig.UNAUTHORIZED).json({
             "message": "Unauthorized access! Only owners can access this route"
         });
     }
