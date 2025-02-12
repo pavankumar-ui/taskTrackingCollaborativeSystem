@@ -15,8 +15,6 @@ const { rateLimiterSettings } = require('../Config/aiConfig');
 
 
 
-
-// Define rate limit (e.g., 5 requests per minute) //callback function to handle rate limiting//
 const taskRateLimiter = createRateLimiter(
     rateLimiterSettings.MAX_REQUESTS,
     rateLimiterSettings.WINDOW_DURATION, 
