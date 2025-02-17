@@ -1,4 +1,5 @@
 const ServerError = require('../../Utils/ServerError');
+const {statusConfig} = require('../../Config/statusConfig');
 
 const postAttachmentBasedonTask = async (req, res, next) => {
     const prisma = req.app.get("prisma");
@@ -22,7 +23,7 @@ const postAttachmentBasedonTask = async (req, res, next) => {
              }
         });
 
-        return res.status(201).json({
+        return res.status(statusConfig.SUCCESS).json({
             message:"file attached successfully",
             fileUrl:attachment.fileUrl,
             task:task.title
@@ -51,7 +52,7 @@ const getAttachmentBasedonTask = async (req, res, next) => {
             }
         });
 
-        return res.status(200).json({
+        return res.status(statusConfig.SUCCESS).json({
             message: "attachments fetched successfully",
             attachments: attachments.map(attachment => ({
                 fileUrl: attachment.fileUrl,
@@ -80,7 +81,7 @@ const updateAttachmentBasedonTask = async (req, res, next) => {
             fileUrl
           }
         });
-            return res.status(200).json({
+            return res.status(statusConfig.SUCCESS).json({
             message:"attachment updated successfully",
             attachment:attachment.fileUrl
         });
@@ -102,7 +103,11 @@ const deleteAttachmentBasedonTask = async (req, res, next) => {
             }
         });
 
-        return res.status(200).json({
+        if(!attachment) return res.status(statusConfig.NOT_FOUND).json({
+            message:"attachment ID not found"
+        });
+
+        return res.status(statusConfig.SUCCESS).json({
             message:"attachment deleted successfully",
             attachment:attachment.fileUrl
         });

@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
 const crypto = require('crypto');
+const { statusConfig } = require('../Config/statusConfig');
 
 
 
@@ -12,7 +13,8 @@ const validateJWT = async (req, res, next) => {
     const token = headers.authorization;
 
     if (!token) {
-        return res.status(400).json({ "message": 'Token not found' });
+        return res.status(statusConfig.BAD_REQUEST).
+        json({ "message": 'Token not found' });
     }
 
     try {
@@ -28,7 +30,7 @@ const validateJWT = async (req, res, next) => {
         });
 
         if (blacklistedTokenCheck) {
-            return res.status(401).json({ message: "Session destroyed! please login again" });
+            return res.status(statusConfig.TOKEN_EXPIRED).json({ message: "Session destroyed! please login again" });
         }
 
 
@@ -38,7 +40,7 @@ const validateJWT = async (req, res, next) => {
         const user = await prisma.user.findFirst({ where: { id: decodedToken.id } });
 
         //if the token is invalid then return invalid//
-        if (!user) return res.status(498).json({ "message": "Invalid Token" });
+        if (!user) return res.status(statusConfig.USER_TOKEN_INVALID).json({ "message": "Invalid Token" });
         //if the token is valid then add user to req object//
 
          //now register the user for notifications after successful authentication//
@@ -52,7 +54,7 @@ const validateJWT = async (req, res, next) => {
     catch (error) {
         console.log("error in middleware",error);
         if (error.name === "TokenExpiredError") {
-            return res.status(401).json({ "message": "Token Expired! please login again" });
+            return res.status(statusConfig.TOKEN_EXPIRED).json({ "message": "Token Expired! please login again" });
         }
     }
 }

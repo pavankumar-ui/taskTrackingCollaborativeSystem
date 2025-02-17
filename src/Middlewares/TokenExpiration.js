@@ -1,9 +1,10 @@
+const { statusConfig } = require("../Config/statusConfig");
 
 const TokenExpiration = async (req,res,err,next)=>{
 
      if(err.name === "TokenExpiredError"){
          
-        return res.status(401).json(
+        return res.status(statusConfig.TOKEN_EXPIRED).json(
             {
                 "error": "token has expired",
                 "message": "please login again"

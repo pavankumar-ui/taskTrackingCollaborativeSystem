@@ -14,17 +14,18 @@ const {postAttachmentBasedonTask,
 
        const validateJWT = require('../Middlewares/validateJWT');
        const teamAccess = require('../Middlewares/teamAccess');
+       const {validateComment,validateAttachment} = require('../Middlewares/Validate');
 
 collaborateRouter.use(validateJWT);
 //comment based routes//
-collaborateRouter.post("/:taskId/comment", postACommmentBasedonProjectTask);
+collaborateRouter.post("/:taskId/comment", validateComment,postACommmentBasedonProjectTask);
 collaborateRouter.get("/:taskId/comment",teamAccess,getCommentsBasedonTask);
 collaborateRouter.put("/:commentId",updateCommentBasedonTask);
 collaborateRouter.delete("/:commentId",deleteCommentBasedonTask);
 collaborateRouter.get("/user/:taskId/comments",getUserPostedComments);
 
 //atachment based routes
-collaborateRouter.post("/:taskId/attachment",postAttachmentBasedonTask);
+collaborateRouter.post("/:taskId/attachment",validateAttachment,postAttachmentBasedonTask);
 collaborateRouter.get("/:taskId/attachment",teamAccess,getAttachmentBasedonTask);
 collaborateRouter.delete("/:taskId/attachment",deleteAttachmentBasedonTask);
 collaborateRouter.put("/:taskId/attachment",updateAttachmentBasedonTask);
