@@ -51,10 +51,6 @@ const deployTeamMembers = async (req, res, next) => {
     const teamObject = await prisma.team.findUnique({ where: { teamId: teamId } });
     const user = await prisma.user.findUnique({ where: { id: userId } });
 
-    //console.log(user);
-    //console.log(teamMember);
-
-
     //check whether the team exists or not//
     if (!teamObject) return res.status(statusConfig.NOT_FOUND)
                                 .json({ message: "Team not found" });

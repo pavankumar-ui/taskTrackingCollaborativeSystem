@@ -18,8 +18,6 @@ const teamAccess = async (req,res,next)=>{
         }
     });
 
-    //console.log(teamMember);
-
     // Check if user is team lead for this project
     const isTeamLead = prisma.user.designation_role === "technical_lead" &&
                        prisma.teamMember.role === "owner";
@@ -35,7 +33,6 @@ const teamAccess = async (req,res,next)=>{
     //to check whether user belongs to the same team or not
     const isTeamMember = team && teamMember && team.teamId === teamMember.teamId;
 
-    //console.log(isTeamMember);
 
     // Check if user is team lead or member belongs to the same project,if not restrict access to attachments//
     if (!isTeamMember && !isTeamLead) {

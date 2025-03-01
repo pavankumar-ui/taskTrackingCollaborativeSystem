@@ -50,7 +50,7 @@ const deleteProjectsById = async (req,res,next)=>{
     const prisma = req.app.get("prisma");
 
     const projectId = parseInt(req.params.Pid);
-    console.log(projectId);
+    
 
     try{
          const project = await prisma.project.delete({where:{Pid:projectId}});

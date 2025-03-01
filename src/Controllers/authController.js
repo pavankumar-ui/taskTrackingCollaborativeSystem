@@ -108,7 +108,6 @@ const modifyProfileData = async (req, res, next) => {
     try {
 
         const UserId = req.user.id;
-        //console.log(UserId);
 
 
         //here in designation role, sde refers to an ordinary team member,
@@ -122,13 +121,12 @@ const modifyProfileData = async (req, res, next) => {
         if (req.body.designation_role) updateData.designation_role = req.body.designation_role;
         if (req.body.company_name) updateData.company_name = req.body.company_name;
         if (req.body.is_active) updateData.is_active = req.body.is_active;
-        console.log(updateData);
-
+        
         const updatedUser = await prisma.user.update({
             where: { id: UserId },
             data: updateData
         });
-        //console.log(updatedUser);
+        
 
         return res.status(statusConfig.SUCCESS).json({
             "message": "user Profile data updated Successfully",
@@ -171,9 +169,6 @@ const logout = async (req, res, next) => {
                 }
             });
 
-            console.log(deleteTheToken);
-
-
 
             //insert token into blacklistedToken table //
             const blacklistedToken = await prisma.blacklistedToken.create({
@@ -189,12 +184,10 @@ const logout = async (req, res, next) => {
 
 
         } catch (err) {
-            //console.error("Error inserting token into blacklist:", err);
             return res.status(statusConfig.INTERNAL_SERVER_ERROR)
             .json({ message: "Database error" });
         }
     } catch (error) {
-        //console.error("Token verification failed:", error.message);
         return res.status(statusConfig.INVALID_TOKEN).json({ message: "token is invalid!" });
     }
 }

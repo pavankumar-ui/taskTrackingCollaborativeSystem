@@ -2,7 +2,7 @@ class NotificationService {
 
     constructor(io){
         this.io=io;
-        console.log('📢 Notification Service Initialized');
+this.notifications = [];
     }
 
 notifyTaskAssignment(userId, taskData) {

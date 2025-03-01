@@ -52,7 +52,6 @@ const validateJWT = async (req, res, next) => {
     }
 
     catch (error) {
-        console.log("error in middleware",error);
         if (error.name === "TokenExpiredError") {
             return res.status(statusConfig.TOKEN_EXPIRED).json({ "message": "Token Expired! please login again" });
         }

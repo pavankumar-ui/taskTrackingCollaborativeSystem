@@ -15,7 +15,6 @@ const viewTasksBasedonAssignedUser = async (req, res, next) => {
             }
         });
 
-        console.log(checkMemberId);
 
         const assignedMember = await prisma.task.findMany({
             where: {
@@ -52,7 +51,6 @@ const UpdateThestatusofTask = async (req, res, next) => {
             where: { Tid: parseInt(Tid), assignedTo: req.user.id }
         });
 
-        console.log(taskExists);
 
         if (!taskExists) {
             return res.status(statusConfig.NOT_FOUND)
